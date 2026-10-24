@@ -5,7 +5,7 @@ They validate incoming JSON and control exactly what goes out in responses
 (for example, password_hash is never part of any response model).
 """
 from datetime import date, datetime
-from typing import List, Literal, Optional
+from typing import Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -99,10 +99,3 @@ class VerifyOut(BaseModel):
     result: str
     visit_date: date
     status: str
-
-
-class MessageOut(BaseModel):
-    message: str
-
-
-RequestList = List[RequestOut]
