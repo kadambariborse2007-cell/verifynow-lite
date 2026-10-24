@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!-- verify.html - PUBLIC page opened by the QR code; shows only case code, result and visit date -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verify Report | PAMAC VerifyNow</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2 4 5v6c0 5.2 3.4 9.9 8 11 4.6-1.1 8-5.8 8-11V5l-8-3z' fill='%230d6efd'/%3E%3Cpath d='m8.2 12.2 2.7 2.7 5-5.6' fill='none' stroke='%23fff' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+  <nav id="navbar"></nav>
+
+  <main class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="card p-4 text-center">
+          <h3 class="mb-3">Verify a report</h3>
+          <form id="verifyForm" class="d-flex gap-2 mb-3">
+            <input class="form-control" id="code" placeholder="Case code, e.g. VN-0001" required maxlength="20">
+            <button class="btn btn-primary" type="submit">Verify</button>
+          </form>
+          <div id="resultArea"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="text-center text-muted py-3">PAMAC VerifyNow &middot; Address Verification System</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    const GENUINE_ICON = `<svg class="verify-icon mb-2" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 2 4 5v6c0 5.2 3.4 9.9 8 11 4.6-1.1 8-5.8 8-11V5l-8-3z" fill="#198754"/>
+      <path d="m8.2 12.2 2.7 2.7 5-5.6" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+    async function verify(code) {
+      const area = document.getElementById("resultArea");
+      area.innerHTML = `<p class="text-muted">Checking...</p>`;
+      try {
+        const data = await api(`/verify/${encodeURIComponent(code)}`, { noRedirect: true });
+        area.innerHTML = `
+          <div class="alert alert-success">
+            ${GENUINE_ICON}
+            <h4 class="alert-heading">Genuine report</h4>
+            <p class="mb-1">Case code: <strong>${escapeHtml(data.case_code)}</strong></p>
+            <p class="mb-1">Result: <strong>${escapeHtml(data.result)}</strong></p>
+            <p class="mb-1">Visit date: <strong>${formatDate(data.visit_date)}</strong></p>
+            <p class="mb-0">Status: <strong>${escapeHtml(data.status)}</strong></p>
+          </div>
+          <p class="small text-muted mb-0">This report was issued by PAMAC VerifyNow.</p>`;
+      } catch (err) {
+        const msg = err.status === 404 ? "No report found for this case code." : err.message;
+        area.innerHTML = `<div class="alert alert-danger"><h5 class="alert-heading">No report found</h5>
+          <p class="mb-0">${escapeHtml(msg)}</p></div>`;
+      }
+    }
+
+    document.getElementById("verifyForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const code = document.getElementById("code").value.trim().toUpperCase();
+      if (!code) return;
+      history.replaceState(null, "", `verify.html?code=${encodeURIComponent(code)}`);
+      verify(code);
+    });
+
+    // Opened from the QR code: verify.html?code=VN-0001
+    const codeFromUrl = getQueryParam("code");
+    if (codeFromUrl) {
+      document.getElementById("code").value = codeFromUrl;
+      verify(codeFromUrl.trim().toUpperCase());
+    }
+  </script>
+</body>
+</html>

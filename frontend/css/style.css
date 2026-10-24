@@ -1,0 +1,48 @@
+/* style.css - small custom styles on top of Bootstrap 5 */
+body {
+  background: #f5f7fb;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main { flex: 1; }
+
+.brand-logo { width: 30px; height: 30px; }
+
+.card { border: none; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06); }
+
+/* Status badges: Received = grey, In Progress = orange, Completed = green */
+.badge-status { font-size: 0.85rem; padding: 0.4em 0.7em; }
+.status-received { background: #6c757d; color: #fff; }
+.status-inprogress { background: #fd7e14; color: #fff; }
+.status-completed { background: #198754; color: #fff; }
+
+/* Activity timeline */
+.timeline { list-style: none; padding-left: 0; margin: 0; border-left: 3px solid #dbe4ff; }
+.timeline li { position: relative; padding: 0 0 1rem 1.2rem; }
+.timeline li::before {
+  content: "";
+  position: absolute;
+  left: -8px;
+  top: 4px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #0d6efd;
+}
+.timeline small { color: #6c757d; }
+
+.photo-thumb {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #e9ecef;
+}
+
+.hero-logo { width: 90px; height: 90px; }
+
+.verify-icon { width: 80px; height: 80px; }
+
+footer { font-size: 0.85rem; }

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!-- staff-dashboard.html - staff list of all requests with a status filter -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Staff Dashboard | PAMAC VerifyNow</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2 4 5v6c0 5.2 3.4 9.9 8 11 4.6-1.1 8-5.8 8-11V5l-8-3z' fill='%230d6efd'/%3E%3Cpath d='m8.2 12.2 2.7 2.7 5-5.6' fill='none' stroke='%23fff' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+  <nav id="navbar"></nav>
+
+  <main class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <h3 class="mb-0">All requests</h3>
+      <div class="d-flex align-items-center gap-2">
+        <label for="statusFilter" class="form-label mb-0">Status</label>
+        <select id="statusFilter" class="form-select">
+          <option value="">All</option>
+          <option>Received</option>
+          <option>In Progress</option>
+          <option>Completed</option>
+        </select>
+      </div>
+    </div>
+    <div id="alert"></div>
+    <div class="card">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr><th>Case code</th><th>Customer</th><th>Person</th><th>Address</th><th>Purpose</th><th>Status</th><th>Created</th><th></th></tr>
+          </thead>
+          <tbody id="rows"><tr><td colspan="8" class="text-center text-muted py-4">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer class="text-center text-muted py-3">PAMAC VerifyNow &middot; Address Verification System</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    async function loadRequests() {
+      clearAlert("alert");
+      const status = document.getElementById("statusFilter").value;
+      const path = status ? `/requests?status=${encodeURIComponent(status)}` : "/requests";
+      try {
+        const list = await api(path);
+        const rows = document.getElementById("rows");
+        if (!list.length) {
+          rows.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">No requests found.</td></tr>`;
+          return;
+        }
+        rows.innerHTML = list.map((r) => `
+          <tr>
+            <td class="fw-semibold">${escapeHtml(r.case_code)}</td>
+            <td>${escapeHtml(r.customer_name)}</td>
+            <td>${escapeHtml(r.person_name)}</td>
+            <td class="text-truncate" style="max-width: 220px">${escapeHtml(r.address)}</td>
+            <td>${escapeHtml(r.purpose)}</td>
+            <td>${statusBadge(r.status)}</td>
+            <td>${formatDateTime(r.created_at)}</td>
+            <td><a class="btn btn-sm btn-outline-primary" href="staff-request.html?id=${r.id}">Open</a></td>
+          </tr>`).join("");
+      } catch (err) {
+        showAlert("alert", err.message);
+      }
+    }
+
+    document.getElementById("statusFilter").addEventListener("change", loadRequests);
+
+    requireLogin("staff").then((user) => { if (user) loadRequests(); });
+  </script>
+</body>
+</html>

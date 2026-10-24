@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<!-- index.html - landing page with a short intro, Login and Register buttons -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Home | PAMAC VerifyNow</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2 4 5v6c0 5.2 3.4 9.9 8 11 4.6-1.1 8-5.8 8-11V5l-8-3z' fill='%230d6efd'/%3E%3Cpath d='m8.2 12.2 2.7 2.7 5-5.6' fill='none' stroke='%23fff' stroke-width='2.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+  <nav id="navbar"></nav>
+
+  <main class="container py-4">
+    <div class="row justify-content-center text-center py-4">
+      <div class="col-lg-8">
+        <svg class="hero-logo mb-3" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2 4 5v6c0 5.2 3.4 9.9 8 11 4.6-1.1 8-5.8 8-11V5l-8-3z" fill="#0d6efd"/>
+          <path d="m8.2 12.2 2.7 2.7 5-5.6" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h1 class="fw-bold">PAMAC VerifyNow</h1>
+        <p class="lead text-muted">Simple, trusted address verification.</p>
+        <p>Request an address check online. Our field staff visit the address, take photos, record their
+          findings and generate a PDF report with a QR code. Anyone can scan the QR code to confirm the
+          report is genuine.</p>
+        <div id="actions" class="d-flex justify-content-center gap-2 my-4">
+          <a href="login.html" class="btn btn-primary btn-lg">Login</a>
+          <a href="register.html" class="btn btn-outline-primary btn-lg">Register</a>
+        </div>
+      </div>
+    </div>
+    <div class="row g-3">
+      <div class="col-md-4"><div class="card h-100 p-3"><h5>1. Request</h5>
+        <p class="mb-0 text-muted">Customer submits the person's name, address and purpose.</p></div></div>
+      <div class="col-md-4"><div class="card h-100 p-3"><h5>2. Visit</h5>
+        <p class="mb-0 text-muted">Staff visit the address and upload 3 photos with their findings.</p></div></div>
+      <div class="col-md-4"><div class="card h-100 p-3"><h5>3. Report</h5>
+        <p class="mb-0 text-muted">A PDF report with a QR code is generated and can be verified by anyone.</p></div></div>
+    </div>
+  </main>
+
+  <footer class="text-center text-muted py-3">PAMAC VerifyNow &middot; Address Verification System</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    // If already logged in, show a shortcut to the user's dashboard instead
+    if (isLoggedIn()) {
+      document.getElementById("actions").innerHTML =
+        `<a href="${homePageFor(getRole())}" class="btn btn-primary btn-lg">Go to my dashboard</a>`;
+    }
+  </script>
+</body>
+</html>
